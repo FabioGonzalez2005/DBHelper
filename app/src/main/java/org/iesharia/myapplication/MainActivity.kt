@@ -6,12 +6,14 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -182,16 +184,22 @@ fun MainActivity(modifier: Modifier) {
                 Text(text = "Mostrar")
             }
         }
-        Row {
-            Text(
-                modifier = bModifier,
-                text = lName
-            )
-            Text(
-                modifier = bModifier,
-                text = lAge
-            )
+        LazyColumn {
+            items(nameList.zip(ageList)) { (name, age) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .clickable {
+                            Toast.makeText(context, "Seleccionado: $name, $age", Toast.LENGTH_SHORT)
+                                .show()
+                        },
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = name)
+                    Text(text = age)
+                }
+            }
         }
-
     }
 }
