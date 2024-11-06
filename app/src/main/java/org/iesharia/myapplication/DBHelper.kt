@@ -49,6 +49,18 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) 
         return deletedRows
     }
 
+    fun updateName(name: String, age: String): Int {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put(AGE_COL, age)
+        val whereClause = "$NAME_COl = ?"
+        val whereArgs = arrayOf(name)
+
+        val updatedRows = db.update(TABLE_NAME, values, whereClause, whereArgs)
+        db.close()
+        return updatedRows
+    }
+
     fun getName(): Cursor? {
 
         val db = this.readableDatabase
