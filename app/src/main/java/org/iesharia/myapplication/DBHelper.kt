@@ -26,6 +26,13 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) 
     }
 
 
+    fun getName(): Cursor? {
+
+        val db = this.readableDatabase
+
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null)
+    }
+
     fun addName(name : String, age : String ){
 
         val values = ContentValues()
@@ -49,24 +56,16 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) 
         return deletedRows
     }
 
-    fun updateName(name: String, age: String): Int {
+    fun updateName(oldName: String, newName: String, newAge: String): Int {
         val db = this.writableDatabase
-        val values = ContentValues()
-        values.put(AGE_COL, age)
-        val whereClause = "$NAME_COl = ?"
-        val whereArgs = arrayOf(name)
-
-        val updatedRows = db.update(TABLE_NAME, values, whereClause, whereArgs)
-        db.close()
-        return updatedRows
+        val contentValues = ContentValues().apply {
+            put(NAME_COl, newName)
+            put(AGE_COL, newAge)
+        }
+        return db.update(TABLE_NAME, contentValues, "$NAME_COl = ?", arrayOf(oldName))
     }
 
-    fun getName(): Cursor? {
 
-        val db = this.readableDatabase
-
-        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null)
-    }
 
     companion object{
         private val DATABASE_NAME = "nombres"
