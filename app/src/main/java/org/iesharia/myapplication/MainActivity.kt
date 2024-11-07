@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -129,29 +130,24 @@ fun MainActivity(modifier: Modifier) {
                     val name = nameValue
                     val age = ageValue
 
-                    if (name.isNotEmpty() && age.isNotEmpty()) {
-                        val rowsDeleted = db.deleteName(name, age)
+                    println("Intentando eliminar el registro con nombre: $name y edad: $age")
 
-                        if (rowsDeleted > 0) {
-                            Toast.makeText(
-                                context,
-                                "$name eliminado de la base de datos",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "No se encontró ningún registro con el nombre $name y la edad $age",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+                    val rowsDeleted = db.deleteName(name, age)
+
+                    if (rowsDeleted > 0) {
+                        Toast.makeText(
+                            context,
+                            "$name eliminado de la base de datos",
+                            Toast.LENGTH_LONG
+                        ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "Selecciona un usuario para eliminar",
+                            "No se encontró ningún registro con el nombre $name y la edad $age",
                             Toast.LENGTH_LONG
                         ).show()
                     }
+
                     nameValue = ""
                     ageValue = ""
                 }
@@ -203,6 +199,11 @@ fun MainActivity(modifier: Modifier) {
         }
 
         // Lista de usuarios
+        Spacer(modifier = Modifier.padding(10.dp))
+        Text(
+            text = "Lista de usuarios:",
+            fontSize = 16.sp
+        )
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(nameList.zip(ageList)) { (name, age) ->
                 Row(
@@ -210,8 +211,8 @@ fun MainActivity(modifier: Modifier) {
                         .fillMaxWidth()
                         .padding(8.dp)
                         .clickable {
-                            nameValue = name
-                            ageValue = age
+                            selectedName = name
+                            selectedAge = age
                         },
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
