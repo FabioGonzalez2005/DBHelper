@@ -49,11 +49,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) 
 
     fun deleteName(name: String, age: String): Int {
         val db = this.writableDatabase
-        val whereClause = "$NAME_COl = ? AND $AGE_COL = ?"
-        val whereArgs = arrayOf(name, age)
-        val deletedRows = db.delete(TABLE_NAME, whereClause, whereArgs)
-        db.close()
-        return deletedRows
+        // Intenta borrar el registro que coincida exactamente con el nombre y la edad proporcionados
+        return db.delete(TABLE_NAME, "$NAME_COl = ? AND $AGE_COL = ?", arrayOf(name, age))
     }
 
     fun updateName(oldName: String, newName: String, newAge: String): Int {

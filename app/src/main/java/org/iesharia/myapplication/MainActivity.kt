@@ -129,6 +129,8 @@ fun MainActivity(modifier: Modifier) {
                     val name = nameValue
                     val age = ageValue
 
+                    println("Intentando eliminar el registro con nombre: $name y edad: $age")
+
                     val rowsDeleted = db.deleteName(name, age)
 
                     if (rowsDeleted > 0) {
