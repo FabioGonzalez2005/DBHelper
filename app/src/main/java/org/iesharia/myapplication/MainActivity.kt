@@ -213,5 +213,57 @@ fun MainActivity(modifier: Modifier) {
                 }
             }
         }
+
+        // Menú de actualización
+        if (showUpdateMenu) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Actualizar usuario",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+
+                OutlinedTextField(
+                    value = nameValue,
+                    onValueChange = { nameValue = it },
+                    label = { Text("Nuevo Nombre") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+
+                OutlinedTextField(
+                    value = ageValue,
+                    onValueChange = { ageValue = it },
+                    label = { Text("Nueva Edad") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+
+                Button(
+                    onClick = {
+                        val updatedRows = db.updateName(selectedName!!, nameValue, ageValue)
+                        if (updatedRows > 0) {
+                            Toast.makeText(context, "$selectedName actualizado correctamente", Toast.LENGTH_LONG).show()
+                            selectedName = null
+                            selectedAge = null
+                            nameValue = ""
+                            ageValue = ""
+                            showUpdateMenu = false
+                        } else {
+                            Toast.makeText(context, "No se pudo actualizar $selectedName", Toast.LENGTH_LONG).show()
+                        }
+                    },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text(text = "Guardar Cambios")
+                }
+            }
+        }
     }
 }
