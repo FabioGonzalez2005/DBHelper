@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -34,10 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.iesharia.myapplication.ui.theme.MyApplicationTheme
 
-
-
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,10 +43,10 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 Scaffold(
                     modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
+                        .fillMaxSize()
+                        .padding(10.dp)
                 ) { innerPadding ->
-                    MainActivity (
+                    MainActivity(
                         modifier = Modifier
                             .padding(innerPadding)
                             .fillMaxWidth()
@@ -63,11 +61,15 @@ class MainActivity : ComponentActivity() {
 fun MainActivity(modifier: Modifier) {
     val context = LocalContext.current
     val db = DBHelper(context)
+    var nameList by remember { mutableStateOf(listOf<String>()) }
+    var ageList by remember { mutableStateOf(listOf<String>()) }
+    var nameValue by remember { mutableStateOf("") }
+    var ageValue by remember { mutableStateOf("") }
+    var selectedName by remember { mutableStateOf<String?>(null) }
+    var selectedAge by remember { mutableStateOf<String?>(null) }
+    var showUpdateMenu by remember { mutableStateOf(false) }
 
-    var lName:String by remember { mutableStateOf("Nombre") }
-    var lAge:String by remember { mutableStateOf("Edad") }
-
-    Column (
+    Column(
         verticalArrangement = Arrangement.Center,
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -80,52 +82,40 @@ fun MainActivity(modifier: Modifier) {
         Text(
             text = "Muuuuuy simple\nNombre/Edad",
             fontSize = 10.sp
-
         )
-        //Nombre
-        var nameValue by remember { mutableStateOf("") }
+
+        // Nombre
         OutlinedTextField(
             value = nameValue,
-            onValueChange = {
-                nameValue = it
-            },
+            onValueChange = { nameValue = it },
             modifier = Modifier,
             textStyle = TextStyle(color = Color.DarkGray),
             label = { Text(text = "Nombre") },
             singleLine = true,
             shape = RoundedCornerShape(10.dp)
         )
-        //Edad
-        var ageValue by remember { mutableStateOf("") }
+
+        // Edad
         OutlinedTextField(
             value = ageValue,
-            onValueChange = {
-                ageValue = it
-            },
+            onValueChange = { ageValue = it },
             modifier = Modifier,
             textStyle = TextStyle(color = Color.DarkGray),
             label = { Text(text = "Edad") },
             singleLine = true,
             shape = RoundedCornerShape(10.dp)
         )
-        var bModifier:Modifier = Modifier.padding(4.dp)
+
+        var bModifier: Modifier = Modifier.padding(4.dp)
         Column {
             Button(
                 modifier = bModifier,
                 onClick = {
-
-
                     val name = nameValue
                     val age = ageValue
 
                     db.addName(name, age)
-
-                    Toast.makeText(
-                        context,
-                        name + " adjuntado a la base de datos",
-                        Toast.LENGTH_LONG)
-                        .show()
-
+                    Toast.makeText(context, "$name adjuntado a la base de datos", Toast.LENGTH_LONG).show()
                     nameValue = ""
                     ageValue = ""
                 }
@@ -162,37 +152,59 @@ fun MainActivity(modifier: Modifier) {
                 Text(text = "Eliminar")
             }
 
+            // Botón de Mostrar
             Button(
                 modifier = bModifier,
                 onClick = {
-                    val db = DBHelper(context, null)
-
                     val cursor = db.getName()
 
-                    cursor!!.moveToFirst()
-                    lName += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.NAME_COl))
-                    lAge += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.AGE_COL))
+                    val names = mutableListOf<String>()
+                    val ages = mutableListOf<String>()
 
-                    while(cursor.moveToNext()){
-                        lName += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.NAME_COl))
-                        lAge += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.AGE_COL))
+                    cursor?.let {
+                        if (it.moveToFirst()) {
+                            do {
+                                names.add(it.getString(it.getColumnIndex(DBHelper.NAME_COl)))
+                                ages.add(it.getString(it.getColumnIndex(DBHelper.AGE_COL)))
+                            } while (it.moveToNext())
+                        }
+                        it.close()
                     }
 
-                    cursor.close()
+                    nameList = names
+                    ageList = ages
                 }
             ) {
                 Text(text = "Mostrar")
             }
+
+            // Botón de Actualizar
+            Button(
+                modifier = bModifier,
+                onClick = {
+                    if (selectedName != null && selectedAge != null) {
+                        showUpdateMenu = true
+                        nameValue = selectedName!!
+                        ageValue = selectedAge!!
+                    } else {
+                        Toast.makeText(context, "Seleccione un usuario de la lista", Toast.LENGTH_LONG).show()
+                    }
+                }
+            ) {
+                Text(text = "Actualizar")
+            }
         }
-        LazyColumn {
+
+        // Lista de usuarios
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(nameList.zip(ageList)) { (name, age) ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
                         .clickable {
-                            Toast.makeText(context, "Seleccionado: $name, $age", Toast.LENGTH_SHORT)
-                                .show()
+                            selectedName = name
+                            selectedAge = age
                         },
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
