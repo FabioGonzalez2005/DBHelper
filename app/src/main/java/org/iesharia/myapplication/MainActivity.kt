@@ -176,17 +176,17 @@ fun MainActivity(modifier: Modifier) {
                         },
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "$id - $name")
-                    Text(text = age)
+                    Text(text = "ID: $id                             $name")
+                    Text(text = "Edad: $age")
                 }
             }
         }
 
         if (showUpdateMenu) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                verticalArrangement = Arrangement.Center,
+                modifier = modifier,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "Actualizar usuario",
