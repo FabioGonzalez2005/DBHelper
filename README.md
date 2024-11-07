@@ -8,3 +8,8 @@ Esta aplicación permite gestionar una base de datos de usuarios, donde se puede
 - **Eliminar usuarios** ❌: Puedes eliminar usuarios existentes de la base de datos.
 - **Mostrar usuarios** 👀: Muestra todos los usuarios registrados junto con su edad.
 - **Actualizar usuarios** ✏️: Permite modificar la información de un usuario (nombre o edad).
+
+## **Capturas** 📸
+![Captura de pantalla 1](Captura1.png)
+![Captura de pantalla 2](Captura2.png)
+
