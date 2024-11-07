@@ -129,24 +129,29 @@ fun MainActivity(modifier: Modifier) {
                     val name = nameValue
                     val age = ageValue
 
-                    println("Intentando eliminar el registro con nombre: $name y edad: $age")
+                    if (name.isNotEmpty() && age.isNotEmpty()) {
+                        val rowsDeleted = db.deleteName(name, age)
 
-                    val rowsDeleted = db.deleteName(name, age)
-
-                    if (rowsDeleted > 0) {
-                        Toast.makeText(
-                            context,
-                            "$name eliminado de la base de datos",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        if (rowsDeleted > 0) {
+                            Toast.makeText(
+                                context,
+                                "$name eliminado de la base de datos",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "No se encontró ningún registro con el nombre $name y la edad $age",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     } else {
                         Toast.makeText(
                             context,
-                            "No se encontró ningún registro con el nombre $name y la edad $age",
+                            "Selecciona un usuario para eliminar",
                             Toast.LENGTH_LONG
                         ).show()
                     }
-
                     nameValue = ""
                     ageValue = ""
                 }
@@ -205,8 +210,8 @@ fun MainActivity(modifier: Modifier) {
                         .fillMaxWidth()
                         .padding(8.dp)
                         .clickable {
-                            selectedName = name
-                            selectedAge = age
+                            nameValue = name
+                            ageValue = age
                         },
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
